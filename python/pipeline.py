@@ -30,8 +30,14 @@ def process_data(input_path: str | Path = DEFAULT_INPUT, output_dir: str | Path 
 
     df = pd.read_csv(input_path)
 
-    mortality_rate = float(df["DEATH_EVENT"].mean())
+    if "DEATH_EVENT" not in df.columns:
+        return {"status": "error", "message": "Required column 'DEATH_EVENT' not found in input."}
+
     record_count = len(df)
+    if record_count == 0:
+        return {"status": "error", "message": "Input file contains no records."}
+
+    mortality_rate = float(df["DEATH_EVENT"].mean())
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
